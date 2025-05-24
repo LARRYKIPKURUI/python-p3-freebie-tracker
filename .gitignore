@@ -47,5 +47,8 @@ jspm_packages
 # Virtual env metadata
 .venv
 
+# Database Migrations
+/Migrations
+
 # pytest cache
 .pytest_cache
