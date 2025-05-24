@@ -12,6 +12,7 @@
 
 - **Schema**: the blueprint of a database. Describes how data relates to other
   data in tables, columns, and relationships between them.
+  [https://dbdiagram.io/d/Code-Challenge-Schema-682d6600b9f7446da371de0f] [Schema LInk]
 - **Persist**: save a schema in a database.
 - **Engine**: a Python object that translates SQL to Python and vice-versa.
 - **Session**: a Python object that uses an engine to allow us to
