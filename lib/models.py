@@ -9,13 +9,6 @@ metadata = MetaData(naming_convention=convention)
 
 Base = declarative_base(metadata=metadata)
 
-# Junction table (many-to-many relationship) 
-company_dev = Table(
-    'company_dev',
-    Base.metadata,
-    Column('company_id', Integer, ForeignKey('companies.id'), primary_key=True),
-    Column('dev_id', Integer, ForeignKey('devs.id'), primary_key=True)
-)
 class Company(Base):
     __tablename__ = 'companies'
 
@@ -25,6 +18,8 @@ class Company(Base):
 
     def __repr__(self):
         return f'<Company {self.name}>'
+    
+    devs = relationship("Dev", secondary="company_dev", back_populates="companies")
 
 class Dev(Base):
     __tablename__ = 'devs'
@@ -35,12 +30,13 @@ class Dev(Base):
     def __repr__(self):
         return f'<Dev {self.name}>'
 
+    companies = relationship("Company", secondary="company_dev", back_populates="devs")
 
 class Freebie(Base):
     __tablename__ = 'freebies'
     
     id = Column(Integer(), primary_key=True)
-    title = Column( String() , nullable = False)
+    value = Column(Integer(), nullable=False)
     item_name = Column(String(), nullable=False)
     company_id = Column(Integer(), ForeignKey('companies.id'), nullable=False)
     dev_id = Column(Integer(), ForeignKey('devs.id'), nullable=False)
@@ -49,3 +45,14 @@ class Freebie(Base):
         dev_name = self.dev.name if self.dev else "Could not find Dev"
         company_name = self.company.name if self.company else "Could not find Company"
         return f"< {self.item_name} was won  by {dev_name}  from {company_name}>"
+    
+    company = relationship("Company")
+    dev = relationship("Dev")
+    
+# Junction table (many-to-many relationship) 
+company_dev = Table(
+    'company_dev',
+    Base.metadata,
+    Column('company_id', Integer, ForeignKey('companies.id'), primary_key=True),
+    Column('dev_id', Integer, ForeignKey('devs.id'), primary_key=True)
+)
