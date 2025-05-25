@@ -17,7 +17,7 @@ class Company(Base):
     founding_year = Column(Integer())
 
     def __repr__(self):
-        return f'<Company {self.name}>'
+        return f'<Company {self.company_name}>'
     
     devs = relationship("Dev", secondary="company_dev", back_populates="companies")
 
@@ -28,7 +28,7 @@ class Dev(Base):
     dev_name = Column(String())
 
     def __repr__(self):
-        return f'<Dev {self.name}>'
+        return f'<Dev {self.dev_name}>'
 
     companies = relationship("Company", secondary="company_dev", back_populates="devs")
 
@@ -42,9 +42,10 @@ class Freebie(Base):
     dev_id = Column(Integer(), ForeignKey('devs.id'), nullable=False)
     
     def __repr__(self):
-        dev_name = self.dev.name if self.dev else "Could not find Dev"
-        company_name = self.company.name if self.company else "Could not find Company"
-        return f"< {self.item_name} was won  by {dev_name}  from {company_name}>"
+        dev_name = self.dev.dev_name if self.dev else "Could not find Dev"
+        company_name = self.company.company_name if self.company else "Could not find Company"
+        return f"< {self.item_name} was won by {dev_name} from {company_name}>"
+
     
     company = relationship("Company")
     dev = relationship("Dev")
