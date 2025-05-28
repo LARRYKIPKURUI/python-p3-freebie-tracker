@@ -69,7 +69,6 @@ class Dev(Base):
     def __repr__(self):
         return f"<Dev {self.dev_name}>"
 
-
 class Freebie(Base):
     __tablename__ = 'freebies'
 
@@ -84,7 +83,6 @@ class Freebie(Base):
     dev = relationship("Dev", back_populates="freebies")
 
     def print_details(self):
-        """Return: {dev name} owns a {freebie item_name} from {company name}"""
         return f"{self.dev.dev_name} owns a {self.item_name} from {self.company.company_name}"
 
     def __repr__(self):
