@@ -23,11 +23,19 @@ class Company(Base):
     company_name = Column(String, nullable=False)
     founding_year = Column(Integer)
 
-    # Relationship to Devs (many-to-many)
+    # Relationships
     devs = relationship("Dev", secondary="company_dev", back_populates="companies")
-
-    # Relationship to Freebies (one-to-many)
     freebies = relationship("Freebie", back_populates="company")
+
+    def give_freebie(self, dev, item_name, value):
+        """Create a new Freebie for a Dev from this Company."""
+        new_freebie = Freebie(item_name=item_name, value=value, company=self, dev=dev)
+        return new_freebie
+
+    @classmethod
+    def oldest_company(cls, session):
+        """Return the Company with the earliest founding year."""
+        return session.query(cls).order_by(cls.founding_year.asc()).first()
 
     def __repr__(self):
         return f"<Company {self.company_name} (founded {self.founding_year})>"
@@ -39,11 +47,24 @@ class Dev(Base):
     id = Column(Integer, primary_key=True)
     dev_name = Column(String, nullable=False)
 
-    # Relationship to Companies (many-to-many)
+    # Relationships
     companies = relationship("Company", secondary="company_dev", back_populates="devs")
-
-    # Relationship to Freebies (one-to-many)
     freebies = relationship("Freebie", back_populates="dev")
+
+    #aggregate methods
+    def received_one(self, item_name):
+        """Return True if the Dev has received a freebie with the given item name."""
+        return any(freebie.item_name == item_name for freebie in self.freebies)
+
+    def give_away(self, other_dev, freebie):
+        """
+        Transfer ownership of a freebie to another Dev,
+        only if the current Dev owns it.
+        """
+        if freebie in self.freebies:
+            freebie.dev = other_dev
+            return True
+        return False
 
     def __repr__(self):
         return f"<Dev {self.dev_name}>"
@@ -58,9 +79,13 @@ class Freebie(Base):
     company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
     dev_id = Column(Integer, ForeignKey('devs.id'), nullable=False)
 
-    # Relationships to link both(company and dev)
+    # Relationships
     company = relationship("Company", back_populates="freebies")
     dev = relationship("Dev", back_populates="freebies")
+
+    def print_details(self):
+        """Return: {dev name} owns a {freebie item_name} from {company name}"""
+        return f"{self.dev.dev_name} owns a {self.item_name} from {self.company.company_name}"
 
     def __repr__(self):
         dev_name = self.dev.dev_name if self.dev else "Unknown Dev"
