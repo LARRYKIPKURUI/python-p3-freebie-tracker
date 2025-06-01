@@ -1,0 +1,18 @@
+# Freebie Tracker - Migrations 
+
+## Overview
+
+This guide explains how to create and manage database migrations for the Freebie Tracker project using **Alembic** with SQLAlchemy.
+
+Migrations help you version control your database schema changes. When you add or modify tables, columns, or relationships in your models, you create a migration to update the database accordingly.
+
+
+
+## Prerequisites to Have 
+
+- You have Alembic installed and configured.
+- Your SQLAlchemy models are defined and ready.
+- You have a working database connection URL in your Alembic configuration.
+
+
+
